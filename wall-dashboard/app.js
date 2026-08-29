@@ -4,15 +4,24 @@
   const STORAGE_KEY = 'wall-dashboard-settings-v1';
   const TASKS_KEY = 'wall-dashboard-tasks-v1';
 
+  // Fixed home location: Helper Esweg 11A, 9722RP Groningen, Netherlands.
+  const HOME_LAT = 53.1975;
+  const HOME_LON = 6.5780;
+  const HOME_PLACE = 'Helper Esweg, Groningen';
+
   const defaultSettings = {
     theme: 'auto',       // auto | light | dark
     units: 'f',          // f | c
-    lat: null,
-    lon: null,
-    place: '',
+    lat: HOME_LAT,
+    lon: HOME_LON,
+    place: HOME_PLACE,
   };
 
   const settings = Object.assign({}, defaultSettings, loadJSON(STORAGE_KEY, {}));
+  // Location is fixed, not user-configurable - never let a stored value override it.
+  settings.lat = HOME_LAT;
+  settings.lon = HOME_LON;
+  settings.place = HOME_PLACE;
   let tasks = loadJSON(TASKS_KEY, []);
 
   function loadJSON(key, fallback) {
@@ -129,10 +138,6 @@
   }
 
   async function fetchWeather() {
-    if (settings.lat == null || settings.lon == null) {
-      wxDescEl.textContent = 'Tap the gear icon to set a location';
-      return;
-    }
     const tempUnitParam = settings.units === 'c' ? 'celsius' : 'fahrenheit';
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${settings.lat}&longitude=${settings.lon}` +
       `&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code` +
@@ -153,20 +158,6 @@
         wxDescEl.textContent = 'Weather unavailable';
       }
     }
-  }
-
-  async function geocode(query) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('geocode failed');
-    const data = await res.json();
-    if (!data.results || !data.results.length) throw new Error('no match');
-    const r = data.results[0];
-    return {
-      lat: r.latitude,
-      lon: r.longitude,
-      place: [r.name, r.admin1, r.country].filter(Boolean).join(', '),
-    };
   }
 
   // ---------- Tasks ----------
@@ -226,16 +217,12 @@
 
   // ---------- Settings modal ----------
   const backdrop = document.getElementById('settings-backdrop');
-  const locationInput = document.getElementById('location-input');
-  const locationStatus = document.getElementById('location-status');
   const themeSelect = document.getElementById('theme-select');
   const unitsSelect = document.getElementById('units-select');
 
   function openSettings() {
-    locationInput.value = settings.place || '';
     themeSelect.value = settings.theme;
     unitsSelect.value = settings.units;
-    locationStatus.textContent = ' ';
     backdrop.classList.add('open');
   }
   function closeSettings() { backdrop.classList.remove('open'); }
@@ -244,43 +231,9 @@
   document.getElementById('close-settings-btn').addEventListener('click', closeSettings);
   backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeSettings(); });
 
-  document.getElementById('use-gps-btn').addEventListener('click', () => {
-    if (!navigator.geolocation) {
-      locationStatus.textContent = 'Geolocation not supported on this device';
-      return;
-    }
-    locationStatus.textContent = 'Locating…';
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        settings.lat = pos.coords.latitude;
-        settings.lon = pos.coords.longitude;
-        settings.place = '';
-        locationInput.value = '';
-        locationStatus.textContent = 'Using GPS location';
-      },
-      () => { locationStatus.textContent = 'Could not get GPS location'; },
-      { timeout: 10000 }
-    );
-  });
-
-  document.getElementById('save-settings-btn').addEventListener('click', async () => {
+  document.getElementById('save-settings-btn').addEventListener('click', () => {
     settings.theme = themeSelect.value;
     settings.units = unitsSelect.value;
-    const query = locationInput.value.trim();
-
-    if (query && query !== settings.place) {
-      locationStatus.textContent = 'Looking up location…';
-      try {
-        const geo = await geocode(query);
-        settings.lat = geo.lat;
-        settings.lon = geo.lon;
-        settings.place = geo.place;
-      } catch {
-        locationStatus.textContent = 'Location not found — try a different search';
-        return;
-      }
-    }
-
     saveSettings();
     applyTheme();
     closeSettings();
