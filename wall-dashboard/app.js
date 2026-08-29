@@ -11,7 +11,7 @@
 
   const defaultSettings = {
     theme: 'auto',       // auto | light | dark
-    units: 'f',          // f | c
+    units: 'c',          // f | c
     lat: HOME_LAT,
     lon: HOME_LON,
     place: HOME_PLACE,
