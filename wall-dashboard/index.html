@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Wall Dashboard</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+
+    <header class="topbar">
+      <div class="topbar-date">
+        <span id="day-name"></span><span class="dot">&middot;</span><span id="full-date"></span>
+      </div>
+      <button class="icon-btn" id="settings-btn" aria-label="Settings" title="Settings">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.36.4.66.75.86.24.14.51.2.79.14H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </header>
+
+    <section class="clock-block">
+      <div class="clock" id="clock">--:--</div>
+      <div class="clock-sub" id="clock-seconds">00</div>
+    </section>
+
+    <section class="card weather-card" id="weather-card">
+      <div class="weather-main">
+        <div class="weather-icon" id="wx-icon">&#9728;&#65039;</div>
+        <div class="weather-temp-block">
+          <div class="weather-temp" id="wx-temp">--&deg;</div>
+          <div class="weather-desc" id="wx-desc">Loading weather&hellip;</div>
+        </div>
+        <div class="weather-hilo">
+          <div><span class="muted">H</span> <span id="wx-hi">--&deg;</span></div>
+          <div><span class="muted">L</span> <span id="wx-lo">--&deg;</span></div>
+        </div>
+      </div>
+      <div class="weather-place" id="wx-place">Set your location in settings</div>
+      <div class="hourly-strip" id="hourly-strip"></div>
+    </section>
+
+    <section class="card tasks-card">
+      <div class="card-head">
+        <h2>Today</h2>
+        <button class="icon-btn small" id="add-task-btn" aria-label="Add task">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+      </div>
+      <ul class="task-list" id="task-list"></ul>
+      <div class="task-empty" id="task-empty">Nothing on the list. Tap + to add.</div>
+    </section>
+
+    <footer class="quote-strip" id="quote-strip">&nbsp;</footer>
+  </div>
+
+  <div class="modal-backdrop" id="settings-backdrop">
+    <div class="modal" role="dialog" aria-label="Settings">
+      <h2>Settings</h2>
+
+      <label class="field-label" for="location-input">Location</label>
+      <div class="field-row">
+        <input type="text" id="location-input" placeholder="City, Country" autocomplete="off" />
+        <button class="btn" id="use-gps-btn">Use GPS</button>
+      </div>
+      <div class="field-hint" id="location-status">&nbsp;</div>
+
+      <label class="field-label" for="theme-select">Theme</label>
+      <select id="theme-select">
+        <option value="auto">Auto (day/night)</option>
+        <option value="light">Always light</option>
+        <option value="dark">Always dark</option>
+      </select>
+
+      <label class="field-label" for="units-select">Units</label>
+      <select id="units-select">
+        <option value="f">Fahrenheit</option>
+        <option value="c">Celsius</option>
+      </select>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="close-settings-btn">Close</button>
+        <button class="btn primary" id="save-settings-btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

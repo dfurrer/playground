@@ -1,0 +1,14 @@
+{
+  "name": "Wall Dashboard",
+  "short_name": "Dashboard",
+  "description": "A portrait wall-mounted dashboard: clock, weather, and a daily task list.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#0d0d0d",
+  "theme_color": "#0d0d0d",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
